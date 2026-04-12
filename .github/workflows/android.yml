@@ -1,11 +1,13 @@
 name: Android CI
 
-on: [push]
+on:
+  push:
+  workflow_dispatch: # 添加这一行即可手动触发
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    # ... 其余保持不变
 
     steps:
     - name: Check out repository
