@@ -1,11 +1,10 @@
 name: Android CI
 
-on:
-  push:
-  workflow_dispatch:
+on: [push]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -13,30 +12,16 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: true
-
-    - name: Set up JDK 21
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '21'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-
-    # 🚀 核心修復步驟：將不穩定的 JitPack 位址，替換成穩定的 Maven Central 官方版本
-    - name: Fix JitPack Dependency
-      run: |
-        sed -i 's/com.github.bitfireAT:dav4jvm:02fe1a95e6/at.bitfire:dav4jvm:0.1.1/g' app/build.gradle
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
     - name: Build with Gradle
-      run: ./gradlew assembleRelease --stacktrace
-
+      run: ./gradlew assembleRelease
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: app-release.apk
-        path: app/build/outputs/apk/release/app-release-unsigned.apk
+        name: app-debug.apk
+        path: app/build/outputs/apk/debug/app-debug.apk
         retention-days: 10
