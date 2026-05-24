@@ -20,13 +20,23 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    # 新增：設定 Gradle 快取，這能大幅減少 JitPack 下載失敗的機率並加快編譯
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
+
+    # 🚀 核心修復步驟：將不穩定的 JitPack 位址，替換成穩定的 Maven Central 官方版本
+    - name: Fix JitPack Dependency
+      run: |
+        sed -i 's/com.github.bitfireAT:dav4jvm:02fe1a95e6/at.bitfire:dav4jvm:0.1.1/g' app/build.gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 調整：加入 --stacktrace 參數，若再次失敗能看到更詳細的下載錯誤原因
     - name: Build with Gradle
       run: ./gradlew assembleRelease --stacktrace
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release.apk
+        path: app/build/outputs/apk/release/app-release-unsigned.apk
+        retention-days: 10
